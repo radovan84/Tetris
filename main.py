@@ -36,20 +36,7 @@ class Board:
         self.rows_cleared = 0
         self.level = level
         self.tick = GAME_TICK_DICT[self.level]
-
-    def clear(self):
-        """
-            Clears the board
-        """
-        self.board_array = np.zeros((self.dim_x, self.dim_y))
-        
-    def mark_square(self, pos_x, pos_y):
-        """
-            Marks a single square on the board
-            as occupied
-        """
-        self.board_array[pos_x][pos_y] = 1
-
+       
     def mark_squares(self, squares, state=2):
         """
             Marks multiple squares on the board
@@ -62,13 +49,6 @@ class Board:
         else:
             for square in squares:
                 self.board_array[square[0]][square[1]] = 2
-
-    def unmark_square(self, pos_x, pos_y):
-        """
-            Unmarks a single square on the board
-            as occupied
-        """
-        self.board_array[pos_x][pos_y] = 0
 
     def unmark_squares(self, squares):
         """
