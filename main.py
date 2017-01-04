@@ -332,5 +332,5 @@ def main_loop(board_rows, board_columns, level):
             
 if __name__ == '__main__':
 
-    main_loop(20, 10, 5)
+    main_loop(20, 10, 1)
         
