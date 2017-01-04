@@ -11,6 +11,7 @@ import time
 import os
 from random import choice, seed
 import winsound
+from itertools import cycle
 
 # internal imports
 from constants import *
@@ -32,6 +33,7 @@ class Board:
         self.dim_y = dim_y
         self.board_array = np.zeros((dim_x, dim_y))
         self.fallen = False
+        self.fallen_multi = 0
         self.score = 0
         self.rows_cleared = 0
         self.level = level
@@ -121,6 +123,7 @@ class Board:
         if self.add_block(new_block) == 0:
             self.add_block(block, falling=False)
             self.fallen = True
+            self.fallen_multi += 1
             self.play_sound_fall(200, 25)
             self.drop_marked_rows()
         else:
@@ -132,6 +135,7 @@ class Board:
             if self.check_squares(new_block2.absolute_coords) == False:
                 self.add_block(new_block, falling=False)
                 self.fallen = True           
+                self.fallen_multi += 1
                 self.play_sound_fall(200, 25)
                 self.drop_marked_rows()
                 
@@ -261,7 +265,7 @@ def create_random_block(board):
     """
         Creates random block at upper
         center of board
-    """
+    """     
     seed()
     my_type = choice(list(BLOCK_DICT.keys()))
     my_rot = choice(list(BLOCK_DICT[my_type].keys()))
@@ -269,7 +273,23 @@ def create_random_block(board):
     my_x = 2    
     my_block = Block(my_x, my_y, my_type, my_rot)
     return my_block
-   
+
+def create_random_blocks(board, n_blocks):
+    """
+        Creates random block at upper
+        center of board
+    """     
+    seed()
+    my_block_list = []
+    for i in range(n_blocks):
+        my_type = choice(list(BLOCK_DICT.keys()))
+        my_rot = choice(list(BLOCK_DICT[my_type].keys()))
+        my_y = int(board.dim_y/(n_blocks + 1))*(i + 1)
+        my_x = 2    
+        my_block = Block(my_x, my_y, my_type, my_rot)
+        my_block_list.append(my_block)
+    return my_block_list    
+    
 def refresh_graphics(board):
     """
         Clears the screen and draws the board
@@ -329,8 +349,69 @@ def main_loop(board_rows, board_columns, level):
         else:            
             pass                       
         refresh_graphics(b)   
+
+def main_loop_multi(board_rows, board_columns, level, n_blocks):
+    """
+        Game loop
+    """
+    b = Board(board_rows, board_columns, level)  
+    block_list = create_random_blocks(b, n_blocks)
+    for block in block_list:
+        b.add_block(block)
+    refresh_graphics(b)
+
+    block_list_iterator = cycle(block_list)    
+    b1 = block_list_iterator.__next__()
+    
+    t1 = time.clock()
+    
+    game_loop = True
+    while game_loop == True:   
+        
+        while not kbhit():
+
+            if b.fallen_multi == n_blocks:
+                b.fallen_multi = 0
+                block_list = create_random_blocks(b, n_blocks)
+                for block in block_list:
+                    if b.add_block(block) == 0:
+                        print("G A M E  O V E R")
+                        game_loop = False
+                        break     
+                        
+            t2 = time.clock()
+            if t2 - t1 > b.tick:
+                t1 = time.clock()
+                for block in block_list:
+                    b.move_block_down(block)             
+                refresh_graphics(b)
+            time.sleep(SYSTEM_TICK)                 
+
+        if game_loop == False:
+            break
+        
+        key = ord(getch())
+        if key == 13:
+            b1 = block_list_iterator.__next__()
+        if key == 75:
+            b.move_block_left(b1)
+        elif key == 77:
+            b.move_block_right(b1)
+        elif key == 80:
+            b.move_block_down(b1) 
+        elif key == 72:
+            b.rotate_block(b1)
+        elif key == 32:
+            b.drop_block(b1)    
+        elif key == 115 or key == 83:
+            b.sound = not b.sound
+        elif key == 27:
+            break
+        else:            
+            pass                       
+        refresh_graphics(b) 
             
 if __name__ == '__main__':
-
-    main_loop(20, 10, 1)
+    
+    main_loop_multi(30, 30, 1, 2)
         
