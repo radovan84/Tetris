@@ -408,7 +408,7 @@ def main_loop_multi(board_rows, board_columns, level, n_blocks):
         elif key == 27:
             break
         else:            
-            pass                       
+            pass                               
         refresh_graphics(b) 
             
 if __name__ == '__main__':
