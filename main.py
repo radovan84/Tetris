@@ -9,7 +9,7 @@ from msvcrt import getch, kbhit
 import numpy as np
 import time
 import os
-from random import choice
+from random import choice, seed
 import winsound
 
 # internal imports
@@ -36,6 +36,7 @@ class Board:
         self.rows_cleared = 0
         self.level = level
         self.tick = GAME_TICK_DICT[self.level]
+        self.sound = True
        
     def mark_squares(self, squares, state=2):
         """
@@ -203,14 +204,17 @@ class Board:
         board_string += '\nLEVEL: {}\n'.format(self.level)
         board_string += 'ROWS CLEARED: {}\n'.format(self.rows_cleared)
         board_string += 'SCORE: {}\n'.format(self.score)
-        board_string += '\n[press ESC to exit]\n'        
+        board_string += '\n[ ARROWS - left/right/down/rotate | SPACE - Drop | S - Sound on/off | ESC - exit ]\n'        
+      
         print(board_string)
         
     def play_sound_drop(self, freq, dur):
-        winsound.Beep(freq, dur)
+        if self.sound == True:
+            winsound.Beep(freq, dur)
 
     def play_sound_fall(self, freq, dur):
-        winsound.Beep(freq, dur)        
+        if self.sound == True:
+            winsound.Beep(freq, dur)        
         
 class Block:
     
@@ -258,6 +262,7 @@ def create_random_block(board):
         Creates random block at upper
         center of board
     """
+    seed()
     my_type = choice(list(BLOCK_DICT.keys()))
     my_rot = choice(list(BLOCK_DICT[my_type].keys()))
     my_y = int(board.dim_y/2)
@@ -317,6 +322,8 @@ def main_loop(board_rows, board_columns, level):
             b.rotate_block(b1)
         elif key == 32:
             b.drop_block(b1)    
+        elif key == 115 or key == 83:
+            b.sound = not b.sound
         elif key == 27:
             break
         else:            
