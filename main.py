@@ -102,14 +102,14 @@ class Board:
         
     # block methods
     # ----------------        
-    def add_block(self, block, falling=True):
+    def add_block(self, block):
         """
             Adds block object to board
         """
         block_coords = block.absolute_coords     
         if self.check_squares(block_coords) == False:
                 return 0           
-        if falling == False:
+        if block.falling == False:
             self.mark_squares(block_coords, 1)
         else:
             self.mark_squares(block_coords, 2)            
@@ -222,11 +222,12 @@ class Board:
         
 class Block:
     
-    def __init__(self, x, y, block_type, block_rotation):
+    def __init__(self, x, y, block_type, block_rotation, falling=True):
         self.x = x
         self.y = y
         self.type = block_type
         self.rotation = block_rotation
+        self.falling = falling
         self.relative_coords = BLOCK_DICT[block_type][block_rotation]
         self.absolute_coords = tuple(((self.x + item[0], self.y + item[1]) for item in self.relative_coords))
 
@@ -413,5 +414,6 @@ def main_loop_multi(board_rows, board_columns, level, n_blocks):
             
 if __name__ == '__main__':
     
-    main_loop_multi(30, 30, 1, 2)
+    pass
+    main_loop(20, 10, 1)
         
