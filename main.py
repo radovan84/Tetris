@@ -259,6 +259,7 @@ class Block:
             self.update_relative_coordinates()
             self.update_absolute_coordinates()        
 
+<<<<<<< HEAD
 ####################            
 # FUNCTIONS
 ####################
@@ -297,38 +298,119 @@ def refresh_graphics(board):
     """
     os.system('cls')
     board.draw_board()
+=======
+class Game:
 
-def main_loop(board_rows, board_columns, level):
-    """
-        Game loop
-    """
-    b = Board(board_rows, board_columns, level)  
-    b1 = create_random_block(b)
-    b.add_block(b1)
-    refresh_graphics(b)
+    def __init__(self, board_rows=20, board_columns=10, level=1):
+        self.board_rows = board_rows
+        self.board_columns = board_columns
+        self.level = level
 
-    t1 = time.clock()
-    
-    game_loop = True
-    while game_loop == True:   
-        
-        while not kbhit():
+    def create_random_block(self, board):
+        """
+            Creates random block at upper
+            center of board
+        """
+        seed()
+        my_type = choice(list(BLOCK_DICT.keys()))
+        my_rot = choice(list(BLOCK_DICT[my_type].keys()))
+        my_y = int(board.dim_y/2)
+        my_x = 2
+        my_block = Block(my_x, my_y, my_type, my_rot)
+        return my_block
+   
+    def refresh_graphics(self, board):
+        """
+            Clears the screen and draws the board
+        """
+        os.system('cls')
+        board.draw_board()
+>>>>>>> final
 
-            if b.fallen == True:
-                b.fallen = False
-                b1 = create_random_block(b)
-                if b.add_block(b1) == 0:
-                    print("G A M E  O V E R")
-                    game_loop = False
-                    break     
-            
-            t2 = time.clock()
-            if t2 - t1 > b.tick:
-                t1 = time.clock()
-                b.move_block_down(b1)              
-                refresh_graphics(b)
-            time.sleep(SYSTEM_TICK)                 
+    def show_menu(self):
+        """
+            Main menu
+        """
+        while True:
+            os.system('cls')
+            print('\nMAIN MENU')
+            print('---------')
+            print('\n1 - Start game')
+            print('\n2 - Set level')
+            print('\n3 - Set grid')
+            print('\n4 - Exit')
+            key = ord(getch())
+            if key == 49:
+                self.start()
+            elif key == 50:
+                level = input("\nEnter Level (1 - 10): ")
+                self.level = int(level)
+            elif key == 51:
+                rows = input("\nEnter number of rows: ")
+                cols = input("\nEnter number of columns: ")
+                self.board_rows, self.board_columns = int(rows), int(cols)
+            elif key == 52:
+                os.system('cls')
+                break
+            else:
+                pass
 
+
+    def start(self):
+        """
+            Starts the game
+        """
+        b = Board(self.board_rows, self.board_columns, self.level)
+        b1 = self.create_random_block(b)
+        b.add_block(b1)
+        self.refresh_graphics(b)
+
+        t1 = time.clock()
+
+        game_loop = True
+        while game_loop == True:
+
+            while not kbhit():
+
+                if b.fallen == True:
+                    b.fallen = False
+                    b1 = self.create_random_block(b)
+                    if b.add_block(b1) == 0:
+                        print("G A M E  O V E R")
+                        game_loop = False
+                        break
+
+                t2 = time.clock()
+                if t2 - t1 > b.tick:
+                    t1 = time.clock()
+                    b.move_block_down(b1)
+                    self.refresh_graphics(b)
+                time.sleep(SYSTEM_TICK)
+
+            if game_loop == False:
+                break
+
+            key = ord(getch())
+            if key == 75:
+                b.move_block_left(b1)
+            elif key == 77:
+                b.move_block_right(b1)
+            elif key == 80:
+                b.move_block_down(b1)
+            elif key == 72:
+                b.rotate_block(b1)
+            elif key == 32:
+                b.drop_block(b1)
+            elif key == 115 or key == 83:
+                b.sound = not b.sound
+            elif key == 27:
+                break
+            else:
+                pass
+            self.refresh_graphics(b)
+
+
+<<<<<<< HEAD
         if game_loop == False:
             break
         
@@ -416,4 +498,11 @@ if __name__ == '__main__':
     
     pass
     main_loop(20, 10, 1)
+=======
+            
+if __name__ == '__main__':
+
+    g = Game()
+    g.show_menu()
+>>>>>>> final
         

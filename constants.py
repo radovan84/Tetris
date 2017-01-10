@@ -32,4 +32,3 @@ GAME_SCORE_DICT = {1 : 40, 2 : 100, 3 : 300, 4 : 1200}
                   
 # system tick for game loop
 SYSTEM_TICK = 10**-12
-
